@@ -28,10 +28,10 @@ namespace BulkyBookWeb.Controllers
         [HttpPost]
         [AutoValidateAntiforgeryToken]
         public IActionResult Create(Category obj)
-        {   
-            if(obj.Name == obj.DisplayOrder.ToString())
+        {
+            if (obj.Name == obj.DisplayOrder.ToString())
             {
-                ModelState.AddModelError("CustomError","Same value for Name e Display Order is not valid!");
+                ModelState.AddModelError("CustomError", "Same value for Name e Display Order is not valid!");
             }
 
             if (ModelState.IsValid)
@@ -40,7 +40,43 @@ namespace BulkyBookWeb.Controllers
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(obj);       
+            return View(obj);
         }
+
+        //GET
+        public IActionResult Edit(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            var categoryFromDb = _db.Categories.Find(id);
+            if (categoryFromDb == null)
+            { 
+                return NotFound(); 
+            }
+            return View(categoryFromDb);
+        }
+
+        //POST
+        [HttpPost]
+        [AutoValidateAntiforgeryToken]
+        public IActionResult Edit(Category obj)
+        {
+            if (obj.Name == obj.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError("CustomError", "Same value for Name e Display Order is not valid!");
+            }
+
+            if (ModelState.IsValid)
+            {
+                _db.Categories.Add(obj);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+        }
+
     }
 }
